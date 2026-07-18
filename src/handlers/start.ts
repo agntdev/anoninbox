@@ -1,24 +1,35 @@
 import { Composer } from "grammy";
 import type { Ctx } from "../bot.js";
-import { mainMenuKeyboard } from "../toolkit/index.js";
+import { registerMainMenuItem, inlineKeyboard, inlineButton } from "../toolkit/index.js";
 
-// The /start handler renders the bot's MAIN MENU — the primary way users operate
-// a button-first bot. A feature adds its own button by calling
-// `registerMainMenuItem(...)` in its own `src/handlers/<slug>.ts`; this handler
-// renders whatever is registered (plus a Help button), so you do NOT edit this
-// file to add a feature. Send ONE message — no placeholder line above the menu.
+registerMainMenuItem({ label: "✉️ Send message", data: "menu:send", order: 10 });
+
+const WELCOME = "Welcome. Send any message and it will be forwarded anonymously to the owner. They can reply without revealing their identity.";
+
 const composer = new Composer<Ctx>();
-
-const WELCOME = "👋 Welcome! Tap a button below to get started.";
 
 composer.command("start", async (ctx) => {
   await ctx.reply(WELCOME, { reply_markup: mainMenuKeyboard() });
 });
 
-// "Back to menu" — re-render the main menu in place from any sub-view.
 composer.callbackQuery("menu:main", async (ctx) => {
   await ctx.answerCallbackQuery();
   await ctx.editMessageText(WELCOME, { reply_markup: mainMenuKeyboard() });
 });
+
+composer.callbackQuery("menu:send", async (ctx) => {
+  await ctx.answerCallbackQuery();
+  await ctx.editMessageText(
+    "Send any message — text, photo, file, or voice. It will be forwarded anonymously to the owner.",
+    { reply_markup: inlineKeyboard([[inlineButton("⬅️ Back to menu", "menu:main")]]) },
+  );
+});
+
+function mainMenuKeyboard() {
+  return inlineKeyboard([
+    [inlineButton("✉️ Send message", "menu:send")],
+    [inlineButton("❓ Help", "menu:help")],
+  ]);
+}
 
 export default composer;

@@ -1,15 +1,14 @@
 import { Composer } from "grammy";
+import type { Ctx } from "../bot.js";
+import { registerMainMenuItem } from "../toolkit/index.js";
 
-// SCAFFOLD — generated from the bot blueprint BEFORE the agent runs.
-// Keep a LIVE registration (.command / .callbackQuery / …) so this feature is
-// never an empty stub. Replace the reply body with real logic + copy; if you
-// change the user-facing text, update tests/specs to match EXACTLY.
-// Do NOT rewrite src/bot.ts — buildBot() already auto-loads this module.
+registerMainMenuItem({ label: "📎 Media", data: "media:info", order: 30 });
 
-const composer = new Composer();
+const composer = new Composer<Ctx>();
 
-composer.command("text|photo|audio|video|document|sticker|voice|location|contact", async (ctx) => {
-  await ctx.reply("Send any supported message type to the bot");
+composer.callbackQuery("media:info", async (ctx) => {
+  await ctx.answerCallbackQuery();
+  await ctx.reply("Send any supported media — it will be forwarded anonymously.");
 });
 
 export default composer;

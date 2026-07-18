@@ -1,0 +1,56 @@
+[
+  {
+    "name": "/reply without arguments shows usage",
+    "steps": [
+      {
+        "send": { "text": "/reply" },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": { "text": "Usage: /reply <token> <your message>" }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "/reply with token but no message shows usage",
+    "steps": [
+      {
+        "send": { "text": "/reply 1" },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": { "text": "Usage: /reply <token> <your message>" }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "/reply with invalid token shows error",
+    "steps": [
+      {
+        "send": { "text": "/reply 999 Hello there" },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": { "text": "Message not found or expired." }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "reply callback prompts for reply text",
+    "steps": [
+      {
+        "send": { "callback": "reply:1" },
+        "expect": [
+          { "method": "answerCallbackQuery" },
+          { "method": "sendMessage", "payload": { "text": "Type your reply to the anonymous sender:" } }
+        ]
+      }
+    ]
+  }
+]

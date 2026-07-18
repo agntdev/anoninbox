@@ -1,0 +1,39 @@
+[
+  {
+    "name": "sending a text message gets anonymous confirmation",
+    "steps": [
+      {
+        "send": { "text": "Hello, this is a test message" },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": { "text": "Message received anonymously." }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "sending a second message also gets confirmation",
+    "steps": [
+      {
+        "send": { "text": "Another message" },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": { "text": "Message received anonymously." }
+          }
+        ]
+      },
+      {
+        "send": { "text": "Yet another" },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": { "text": "Message received anonymously." }
+          }
+        ]
+      }
+    ]
+  }
+]
