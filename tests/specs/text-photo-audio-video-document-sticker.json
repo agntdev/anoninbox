@@ -1,19 +1,13 @@
 [
   {
-    "name": "Send anonymous message",
+    "name": "Media info button shows guidance",
     "steps": [
       {
+        "send": { "callback": "media:info" },
         "expect": [
-          {
-            "method": "sendMessage",
-            "payload": {
-              "text": "Send any supported message type to the bot"
-            }
-          }
-        ],
-        "send": {
-          "text": "/text|photo|audio|video|document|sticker|voice|location|contact"
-        }
+          { "method": "answerCallbackQuery" },
+          { "method": "sendMessage", "payload": { "text": "Send any supported media — it will be forwarded anonymously." } }
+        ]
       }
     ]
   }
