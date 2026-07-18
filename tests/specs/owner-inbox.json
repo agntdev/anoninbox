@@ -1,0 +1,56 @@
+[
+  {
+    "name": "empty inbox shows no messages",
+    "steps": [
+      {
+        "send": { "callback": "inbox:show" },
+        "expect": [
+          { "method": "answerCallbackQuery" },
+          { "method": "editMessageText", "payload": { "text": "No messages yet." } }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "inbox shows messages after they are sent",
+    "steps": [
+      {
+        "send": { "text": "Hello from user" },
+        "expect": [
+          { "method": "sendMessage", "payload": { "text": "Message received anonymously." } }
+        ]
+      },
+      {
+        "send": { "callback": "inbox:show" },
+        "expect": [
+          { "method": "answerCallbackQuery" },
+          { "method": "editMessageText", "payload": { "text": "📬 1 message\n\n1. ⏳ Hello from user" } }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "inbox shows multiple messages newest first",
+    "steps": [
+      {
+        "send": { "text": "First message" },
+        "expect": [
+          { "method": "sendMessage", "payload": { "text": "Message received anonymously." } }
+        ]
+      },
+      {
+        "send": { "text": "Second message" },
+        "expect": [
+          { "method": "sendMessage", "payload": { "text": "Message received anonymously." } }
+        ]
+      },
+      {
+        "send": { "callback": "inbox:show" },
+        "expect": [
+          { "method": "answerCallbackQuery" },
+          { "method": "editMessageText", "payload": { "text": "📬 2 messages\n\n1. ⏳ Second message\n2. ⏳ First message" } }
+        ]
+      }
+    ]
+  }
+]

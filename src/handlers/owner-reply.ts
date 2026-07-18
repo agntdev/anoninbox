@@ -1,15 +1,24 @@
 import { Composer } from "grammy";
 import type { Ctx } from "../bot.js";
 import { getMessageById, markReplied } from "../message-store.js";
+import { inlineButton, inlineKeyboard } from "../toolkit/index.js";
 
 const composer = new Composer<Ctx>();
 
 composer.callbackQuery(/^reply:(\d+)$/, async (ctx) => {
   await ctx.answerCallbackQuery();
-  const token = ctx.match[1];
-  ctx.session.pendingReplyTo = token;
+  const messageId = ctx.match[1];
+  ctx.session.pendingReplyTo = messageId;
   await ctx.reply("Type your reply to the anonymous sender:", {
-    reply_parameters: { message_id: ctx.callbackQuery.message?.message_id ?? 0 },
+    reply_markup: inlineKeyboard([[inlineButton("Cancel", "reply:cancel")]]),
+  });
+});
+
+composer.callbackQuery("reply:cancel", async (ctx) => {
+  await ctx.answerCallbackQuery();
+  ctx.session.pendingReplyTo = undefined;
+  await ctx.reply("Reply cancelled.", {
+    reply_markup: inlineKeyboard([[inlineButton("⬅️ Back to menu", "menu:main")]]),
   });
 });
 

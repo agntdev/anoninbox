@@ -45,10 +45,41 @@
     "name": "reply callback prompts for reply text",
     "steps": [
       {
+        "send": { "text": "Test message for reply" },
+        "expect": [
+          { "method": "sendMessage", "payload": { "text": "Message received anonymously." } }
+        ]
+      },
+      {
         "send": { "callback": "reply:1" },
         "expect": [
           { "method": "answerCallbackQuery" },
           { "method": "sendMessage", "payload": { "text": "Type your reply to the anonymous sender:" } }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "reply cancel callback cancels the reply",
+    "steps": [
+      {
+        "send": { "text": "Another message" },
+        "expect": [
+          { "method": "sendMessage", "payload": { "text": "Message received anonymously." } }
+        ]
+      },
+      {
+        "send": { "callback": "reply:2" },
+        "expect": [
+          { "method": "answerCallbackQuery" },
+          { "method": "sendMessage", "payload": { "text": "Type your reply to the anonymous sender:" } }
+        ]
+      },
+      {
+        "send": { "callback": "reply:cancel" },
+        "expect": [
+          { "method": "answerCallbackQuery" },
+          { "method": "sendMessage", "payload": { "text": "Reply cancelled." } }
         ]
       }
     ]
