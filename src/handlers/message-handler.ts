@@ -3,6 +3,10 @@ import type { Ctx } from "../bot.js";
 import { storeMessage } from "../message-store.js";
 import { inlineButton, inlineKeyboard } from "../toolkit/index.js";
 
+const OWNER_CHAT_ID = process.env.OWNER_CHAT_ID
+  ? Number(process.env.OWNER_CHAT_ID)
+  : undefined;
+
 const composer = new Composer<Ctx>();
 
 composer.on("message", async (ctx: Context, next) => {
@@ -46,10 +50,32 @@ composer.on("message", async (ctx: Context, next) => {
     content = msg.contact.phone_number;
   }
 
-  storeMessage(senderId, contentType, content);
+  const stored = storeMessage(senderId, contentType, content);
 
   const backToMenu = inlineKeyboard([[inlineButton("⬅️ Back to menu", "menu:main")]]);
   await ctx.reply("Message received anonymously.", { reply_markup: backToMenu });
+
+  if (OWNER_CHAT_ID) {
+    try {
+      const preview =
+        contentType === "text"
+          ? content.slice(0, 100)
+          : `[${contentType}]`;
+      await ctx.api.sendMessage(
+        OWNER_CHAT_ID,
+        `📬 New anonymous message\n\n${preview}`,
+        {
+          reply_markup: inlineKeyboard([
+            [inlineButton(`Reply #${stored.id}`, `reply:${stored.id}`)],
+            [inlineButton("📬 View inbox", "inbox:show")],
+          ]),
+        },
+      );
+    } catch {
+      // Owner may have blocked the bot or OWNER_CHAT_ID is invalid.
+      // Non-fatal: message is stored; owner can view via inbox.
+    }
+  }
 });
 
 export default composer;

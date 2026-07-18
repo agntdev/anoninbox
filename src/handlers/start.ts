@@ -1,6 +1,6 @@
 import { Composer } from "grammy";
 import type { Ctx } from "../bot.js";
-import { registerMainMenuItem, inlineKeyboard, inlineButton } from "../toolkit/index.js";
+import { registerMainMenuItem, mainMenuKeyboard, inlineKeyboard, inlineButton } from "../toolkit/index.js";
 
 registerMainMenuItem({ label: "✉️ Send message", data: "menu:send", order: 10 });
 
@@ -24,12 +24,5 @@ composer.callbackQuery("menu:send", async (ctx) => {
     { reply_markup: inlineKeyboard([[inlineButton("⬅️ Back to menu", "menu:main")]]) },
   );
 });
-
-function mainMenuKeyboard() {
-  return inlineKeyboard([
-    [inlineButton("✉️ Send message", "menu:send")],
-    [inlineButton("❓ Help", "menu:help")],
-  ]);
-}
 
 export default composer;
